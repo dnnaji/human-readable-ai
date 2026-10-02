@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 260" role="img" aria-labelledby="title description">
+  <title id="title">Two rules, one starting value</title>
+  <desc id="description">Each sequence starts at one. Adding one gives one, two, three, four. Doubling gives one, two, four, eight. Each arrow is one step.</desc>
+  <rect width="760" height="260" fill="#f8fbff"/>
+  <g font-family="sans-serif" fill="#19344c">
+    <text x="28" y="36" font-size="22">Two rules, one starting value</text>
+    <text x="28" y="67" font-size="15">Each arrow represents one step.</text>
+    <text x="28" y="123" font-size="18">Add one</text>
+    <text x="28" y="190" font-size="18">Double</text>
+    <g font-size="26" text-anchor="middle">
+      <text x="245" y="123">1</text><text x="380" y="123">2</text><text x="515" y="123">3</text><text x="650" y="123">4</text>
+      <text x="245" y="190">1</text><text x="380" y="190">2</text><text x="515" y="190">4</text><text x="650" y="190">8</text>
+    </g>
+    <text x="28" y="235" font-size="13">Original teaching example. Format inspired by Andrej Karpathy's October 1, 2026 post.</text>
+  </g>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#2453a6"/></marker></defs>
+  <g stroke="#2453a6" stroke-width="2" marker-end="url(#arrow)">
+    <path d="M275 115 H345 M410 115 H480 M545 115 H615"/>
+    <path d="M275 182 H345 M410 182 H480 M545 182 H615"/>
+  </g>
+</svg>

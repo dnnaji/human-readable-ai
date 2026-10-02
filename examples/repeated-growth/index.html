@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Two rules, one starting value — Human-readable AI</title>
+  <style>
+    :root { color:#19344c; background:#f8fbff; font-family:"Trebuchet MS",Arial,sans-serif; line-height:1.6; }
+    * { box-sizing:border-box; }
+    body { margin:0; }
+    main { max-width:900px; margin:auto; padding:clamp(20px,5vw,56px); }
+    h1 { font-size:clamp(2rem,5vw,3rem); line-height:1.15; margin:0 0 24px; }
+    h2 { font-size:1.35rem; margin-top:32px; }
+    p { max-width:66ch; }
+    a { color:#2453a6; text-underline-offset:3px; }
+    :focus-visible { outline:3px solid #b75920; outline-offset:4px; }
+    input { font:inherit; width:6rem; padding:6px 10px; border:2px solid #2453a6; border-radius:4px; background:white; }
+    label { display:block; font-weight:bold; margin:24px 0 8px; }
+    output { display:block; margin:20px 0; font-size:1.2rem; }
+    figure { margin:24px 0; }
+    svg { display:block; width:100%; height:auto; background:white; border:1px solid #c2d2e2; }
+    figcaption { margin-top:10px; font-size:.95rem; }
+    table { border-collapse:collapse; width:100%; background:white; }
+    th,td { text-align:left; padding:10px 14px; border-bottom:1px solid #c2d2e2; }
+    .add { color:#b75920; } .double { color:#2453a6; }
+    #error { color:#922c20; min-height:1.6em; }
+    footer { margin-top:40px; padding-top:20px; border-top:1px solid #c2d2e2; font-size:.9rem; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Two rules, one starting value</h1>
+  <p>Both sequences start at 1. One adds 1 at every step. The other doubles the previous value. Change the step count to see how the results diverge.</p>
+  <label for="steps">Number of steps</label>
+  <input id="steps" type="number" min="0" max="10" step="1" value="6" aria-describedby="range error">
+  <p id="range">Use a whole number from 0 through 10.</p>
+  <p id="error" role="status"></p>
+  <output id="result" for="steps" aria-live="polite">At 6 steps: adding one gives 7; doubling gives 64.</output>
+  <noscript><p>JavaScript is off. At six steps, adding one gives 7 and doubling gives 64. The formulas below explain how to calculate other values.</p></noscript>
+  <figure id="chart" hidden>
+    <svg viewBox="0 0 720 300" role="img" aria-labelledby="chart-title chart-description">
+      <title id="chart-title">Adding one compared with doubling</title>
+      <desc id="chart-description">Both sequences begin at one. Exact values are available in the table below.</desc>
+      <path d="M55 25 V250 H690" fill="none" stroke="#19344c"/>
+      <text x="18" y="30" font-size="13" fill="#19344c" id="maximum">64</text>
+      <text x="30" y="253" font-size="13" fill="#19344c">0</text>
+      <text x="51" y="277" font-size="13" fill="#19344c">0</text>
+      <text x="680" y="277" font-size="13" fill="#19344c" id="last-step">6</text>
+      <text x="350" y="295" font-size="13" fill="#19344c">Steps</text>
+      <polyline id="add-line" fill="none" stroke="#b75920" stroke-width="3" stroke-dasharray="7 4"/>
+      <polyline id="double-line" fill="none" stroke="#2453a6" stroke-width="3"/>
+    </svg>
+    <figcaption><span class="add">Dashed orange: add one.</span> <span class="double">Solid blue: double.</span> The vertical axis uses a linear scale that adjusts to the largest value.</figcaption>
+  </figure>
+  <h2>The rules</h2>
+  <p>After <var>n</var> steps, adding one gives <code>1 + n</code>. Doubling gives <code>2^n</code>. A step is one application of the rule, and the starting value is 1. These sequences illustrate two mathematical rules.</p>
+  <table>
+    <caption>Exact values at each step</caption>
+    <thead><tr><th scope="col">Step</th><th scope="col">Add one</th><th scope="col">Double</th></tr></thead>
+    <tbody id="values"><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>6</td><td>7</td><td>64</td></tr></tbody>
+  </table>
+  <footer>
+    <p>Original example from <a href="https://github.com/dnnaji/human-readable-ai">Human-readable AI</a>. Format inspired by <a href="https://x.com/karpathy/status/2105819303471976479">Andrej Karpathy's October 1, 2026 post</a>.</p>
+    <p>This file runs locally without external dependencies, analytics, storage, or network requests. Code: <a href="https://github.com/dnnaji/human-readable-ai/blob/main/LICENSE-CODE">MIT</a>.</p>
+  </footer>
+</main>
+<script>
+  const input = document.getElementById('steps');
+  function update() {
+    const n = Number(input.value);
+    const valid = input.value !== '' && Number.isInteger(n) && n >= 0 && n <= 10;
+    input.setAttribute('aria-invalid', String(!valid));
+    document.getElementById('error').textContent = valid ? '' : 'Enter a whole number from 0 through 10. The displayed results still use the previous valid value.';
+    if (!valid) return;
+    document.getElementById('result').textContent = `At ${n} steps: adding one gives ${n + 1}; doubling gives ${2 ** n}.`;
+    const maximum = 2 ** n;
+    const rows = document.getElementById('values');
+    rows.replaceChildren();
+    const add = [], double = [];
+    for (let i = 0; i <= n; i++) {
+      const row = document.createElement('tr');
+      for (const value of [i, i + 1, 2 ** i]) {
+        const cell = document.createElement('td');
+        cell.textContent = String(value);
+        row.appendChild(cell);
+      }
+      rows.appendChild(row);
+      const x = 55 + (n === 0 ? 0 : i / n * 635);
+      add.push(`${x},${250 - (i + 1) / maximum * 225}`);
+      double.push(`${x},${250 - 2 ** i / maximum * 225}`);
+    }
+    document.getElementById('add-line').setAttribute('points', add.join(' '));
+    document.getElementById('double-line').setAttribute('points', double.join(' '));
+    document.getElementById('maximum').textContent = String(maximum);
+    document.getElementById('last-step').textContent = String(n);
+    document.getElementById('chart-description').textContent = `After ${n} steps, adding one gives ${n + 1} and doubling gives ${2 ** n}. Both begin at one. Read the table for exact values.`;
+    document.getElementById('chart').hidden = false;
+  }
+  input.addEventListener('input', update);
+  update();
+</script>
+</body>
+</html>
